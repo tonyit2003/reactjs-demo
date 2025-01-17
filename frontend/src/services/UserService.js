@@ -13,12 +13,11 @@ const { default: httpRequest } = require("~/utils/httpRequest");
  */
 export const getPaginationUsers = async (page = 1) => {
     try {
-        const res = await httpRequest.get("users", {
+        return await httpRequest.get("users", {
             params: {
                 page,
             },
         });
-        return res.data;
     } catch (error) {
         console.log(error);
     }

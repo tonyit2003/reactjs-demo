@@ -1,4 +1,6 @@
-import { Container, Row } from "react-bootstrap";
+import { Container } from "react-bootstrap";
+import PropTypes from "prop-types";
+
 import Header from "~/components/Header";
 
 function AdminLayout({ children }) {
@@ -11,5 +13,9 @@ function AdminLayout({ children }) {
         </>
     );
 }
+
+AdminLayout.ropTypes = {
+    children: PropTypes.node.isRequired,
+};
 
 export default AdminLayout;
