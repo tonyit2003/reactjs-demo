@@ -5,7 +5,7 @@ import {
 } from "@mui/icons-material";
 import PropTypes from "prop-types";
 
-function EnhancedTableToolbar({ numSelected, title }) {
+function PersonnelTableToolbar({ numSelected, title }) {
     return (
         <Toolbar
             sx={[
@@ -58,8 +58,8 @@ function EnhancedTableToolbar({ numSelected, title }) {
     );
 }
 
-EnhancedTableToolbar.propTypes = {
+PersonnelTableToolbar.propTypes = {
     numSelected: PropTypes.number.isRequired,
 };
 
-export default EnhancedTableToolbar;
+export default PersonnelTableToolbar;

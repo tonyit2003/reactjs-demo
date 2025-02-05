@@ -1,6 +1,7 @@
 const routes = {
     home: "/",
-    personnelManagement: "personnel-management",
+    personnelManagement: "/personnel-management",
+    login: "/login",
 };
 
 export default routes;

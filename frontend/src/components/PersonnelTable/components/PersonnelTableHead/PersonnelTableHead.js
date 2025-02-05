@@ -1,10 +1,15 @@
-import { Box, Checkbox, TableHead, TableSortLabel } from "@mui/material";
+import {
+    Box,
+    Checkbox,
+    TableCell,
+    TableHead,
+    TableRow,
+    TableSortLabel,
+} from "@mui/material";
 import PropTypes from "prop-types";
 import { visuallyHidden } from "@mui/utils";
 
-import { StyledTableCell, StyledTableRow } from "../../StyleTable";
-
-function EnhancedTableHead({
+function PersonnelTableHead({
     headCell,
     onSelectAllClick,
     order,
@@ -19,8 +24,8 @@ function EnhancedTableHead({
 
     return (
         <TableHead>
-            <StyledTableRow>
-                <StyledTableCell padding="checkbox">
+            <TableRow>
+                <TableCell padding="checkbox">
                     <Checkbox
                         color="primary"
                         indeterminate={
@@ -32,9 +37,9 @@ function EnhancedTableHead({
                             "aria-label": "select all desserts",
                         }}
                     />
-                </StyledTableCell>
+                </TableCell>
                 {headCell.map((headCell) => (
-                    <StyledTableCell
+                    <TableCell
                         key={headCell.id}
                         align={headCell.align}
                         padding={headCell.disablePadding ? "none" : "normal"}
@@ -54,14 +59,17 @@ function EnhancedTableHead({
                                 </Box>
                             ) : null}
                         </TableSortLabel>
-                    </StyledTableCell>
+                    </TableCell>
                 ))}
-            </StyledTableRow>
+                <TableCell align="center" padding="normal">
+                    Actions
+                </TableCell>
+            </TableRow>
         </TableHead>
     );
 }
 
-EnhancedTableHead.propTypes = {
+PersonnelTableHead.propTypes = {
     headCell: PropTypes.array.isRequired,
     numSelected: PropTypes.number.isRequired,
     onRequestSort: PropTypes.func.isRequired,
@@ -71,4 +79,4 @@ EnhancedTableHead.propTypes = {
     rowCount: PropTypes.number.isRequired,
 };
 
-export default EnhancedTableHead;
+export default PersonnelTableHead;

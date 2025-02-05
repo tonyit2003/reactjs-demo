@@ -1,5 +1,12 @@
 const { default: httpRequest } = require("~/utils/httpRequest");
 
+export const loginUser = async (email, password) => {
+    return await httpRequest.post("login", {
+        email,
+        password,
+    });
+};
+
 /**
  * @todo: Lấy danh sách người dùng phân trang từ API.
  * @purpose:
@@ -12,13 +19,33 @@ const { default: httpRequest } = require("~/utils/httpRequest");
  * @throws {Error} - Nếu có lỗi xảy ra trong quá trình gọi API, lỗi sẽ được ghi log ra console.
  */
 export const getPaginationUsers = async (page = 1) => {
-    try {
-        return await httpRequest.get("users", {
-            params: {
-                page,
-            },
-        });
-    } catch (error) {
-        console.log(error);
-    }
+    return await httpRequest.get("users", {
+        params: { page },
+    });
+};
+
+export const searchUsers = async (keyword) => {
+    return await httpRequest.get("search-user", {
+        params: { keyword },
+    });
+};
+
+export const addUser = async (email, first_name, last_name) => {
+    return await httpRequest.post("create-user", {
+        email,
+        first_name,
+        last_name,
+    });
+};
+
+export const updateUser = async (id, email, first_name, last_name) => {
+    return await httpRequest.put(`edit-user/${id}`, {
+        email,
+        first_name,
+        last_name,
+    });
+};
+
+export const deleteUser = async (id) => {
+    return await httpRequest.delete(`delete-user/${id}`);
 };

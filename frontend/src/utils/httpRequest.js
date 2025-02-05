@@ -6,7 +6,7 @@ const httpRequest = axios.create({
 
 httpRequest.interceptors.response.use(
     function (response) {
-        return response.data;
+        return response.data || { statusCode: response.status };
     },
     function (error) {
         return Promise.reject(error);

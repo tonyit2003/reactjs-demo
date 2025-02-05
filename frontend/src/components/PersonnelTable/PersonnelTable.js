@@ -8,10 +8,25 @@ import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
+import { Button, styled, TableCell, TableRow } from "@mui/material";
+import classNames from "classnames/bind";
 
-import EnhancedTableToolbar from "./components/EnhancedTableToolbar";
-import EnhancedTableHead from "./components/EnhancedTableHead";
-import { StyledTableCell, StyledTableRow } from "./StyleTable";
+import PersonnelTableHead from "./components/PersonnelTableHead";
+import PersonnelTableToolbar from "./components/PersonnelTableToolbar";
+import CustomButton from "../CustomButton";
+import { green } from "@mui/material/colors";
+import { Delete, Edit } from "@mui/icons-material";
+import styles from "./PersonnelTable.module.scss";
+
+const cx = classNames.bind(styles);
+
+const ButtonEdit = styled(Button)(() => ({
+    color: "white",
+    backgroundColor: green[500],
+    "&:hover": {
+        backgroundColor: green[700],
+    },
+}));
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -29,11 +44,13 @@ function getComparator(order, orderBy) {
         : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-function EnhancedTable({
+function PersonnelTable({
     headCell = [],
     data = [],
     title = "Data",
     className = "",
+    handleOnClickButtonEdit,
+    handleOnClickButtonDelete,
 }) {
     const [order, setOrder] = React.useState("asc");
     const [orderBy, setOrderBy] = React.useState("calories");
@@ -86,7 +103,7 @@ function EnhancedTable({
     return (
         <Box sx={{ width: "100%" }} className={className}>
             <Paper sx={{ width: "100%", mb: 2 }}>
-                <EnhancedTableToolbar
+                <PersonnelTableToolbar
                     title={title}
                     numSelected={selected.length}
                 />
@@ -98,7 +115,7 @@ function EnhancedTable({
                         aria-labelledby="tableTitle"
                         size={dense ? "small" : "medium"}
                     >
-                        <EnhancedTableHead
+                        <PersonnelTableHead
                             numSelected={selected.length}
                             order={order}
                             orderBy={orderBy}
@@ -116,7 +133,7 @@ function EnhancedTable({
                                     const labelId = `enhanced-table-checkbox-${index}`;
 
                                     return (
-                                        <StyledTableRow
+                                        <TableRow
                                             hover
                                             onClick={(event) =>
                                                 handleClick(event, item.id)
@@ -128,7 +145,7 @@ function EnhancedTable({
                                             selected={isItemSelected}
                                             sx={{ cursor: "pointer" }}
                                         >
-                                            <StyledTableCell padding="checkbox">
+                                            <TableCell padding="checkbox">
                                                 <Checkbox
                                                     color="primary"
                                                     checked={isItemSelected}
@@ -137,24 +154,49 @@ function EnhancedTable({
                                                             labelId,
                                                     }}
                                                 />
-                                            </StyledTableCell>
+                                            </TableCell>
 
                                             {headCell &&
                                                 headCell.map(
                                                     (cell, cellIndex) => {
                                                         return (
-                                                            <StyledTableCell
+                                                            <TableCell
                                                                 key={`cell-${index}-${cellIndex}`}
                                                                 align={
                                                                     cell.align
                                                                 }
                                                             >
                                                                 {item[cell.id]}
-                                                            </StyledTableCell>
+                                                            </TableCell>
                                                         );
                                                     }
                                                 )}
-                                        </StyledTableRow>
+                                            <TableCell>
+                                                <div className={cx("actions")}>
+                                                    <CustomButton
+                                                        title="Edit"
+                                                        color="success"
+                                                        Custom={ButtonEdit}
+                                                        startIcon={<Edit />}
+                                                        handleClick={() => {
+                                                            handleOnClickButtonEdit(
+                                                                item
+                                                            );
+                                                        }}
+                                                    />
+                                                    <CustomButton
+                                                        title="Delete"
+                                                        color="error"
+                                                        startIcon={<Delete />}
+                                                        handleClick={() => {
+                                                            handleOnClickButtonDelete(
+                                                                item
+                                                            );
+                                                        }}
+                                                    />
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
                                     );
                                 })}
                         </TableBody>
@@ -171,10 +213,12 @@ function EnhancedTable({
     );
 }
 
-EnhancedTable.propTypes = {
+PersonnelTable.propTypes = {
     headCell: PropTypes.array.isRequired,
     data: PropTypes.array.isRequired,
     title: PropTypes.string,
+    handleOnClickButtonEdit: PropTypes.func,
+    handleOnClickButtonDelete: PropTypes.func,
 };
 
-export default EnhancedTable;
+export default PersonnelTable;
