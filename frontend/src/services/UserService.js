@@ -7,6 +7,15 @@ export const loginUser = async (email, password) => {
     });
 };
 
+export const registerUser = async (email, password, first_name, last_name) => {
+    return await httpRequest.post("register", {
+        email,
+        password,
+        first_name,
+        last_name,
+    });
+};
+
 /**
  * @todo: Lấy danh sách người dùng phân trang từ API.
  * @purpose:
@@ -21,6 +30,9 @@ export const loginUser = async (email, password) => {
 export const getPaginationUsers = async (page = 1) => {
     return await httpRequest.get("users", {
         params: { page },
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
     });
 };
 

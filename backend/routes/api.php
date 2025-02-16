@@ -10,8 +10,13 @@ use Illuminate\Support\Facades\Route;
 // })->middleware('auth:sanctum');
 
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register']);
 
-Route::get('/users', action: [UserController::class, 'index']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/users', action: [UserController::class, 'index']);
+});
+
 Route::get('/search-user', action: [UserController::class, 'search']);
 Route::post('/create-user', action: [UserController::class, 'store']);
 Route::put('/edit-user/{id}', [UserController::class, 'update']);

@@ -18,6 +18,7 @@ import { UserContext } from "~/context/UserContext";
 
 import styles from "./Header.module.scss";
 import config from "~/config";
+import { DarkMode } from "@mui/icons-material";
 
 const cx = classNames.bind(styles);
 
@@ -47,6 +48,7 @@ function Header() {
     const handleLogout = () => {
         logout();
         localStorage.removeItem("token");
+        localStorage.removeItem("email");
         setOpenToast(true);
         setMessage({ content: "Logout successfully", error: false });
         navigate(config.routes.login);
@@ -61,7 +63,7 @@ function Header() {
     };
 
     return (
-        <div>
+        <div className={cx("header")}>
             <AppBar position="static">
                 <Container maxWidth="xl">
                     <Toolbar disableGutters>
@@ -247,14 +249,28 @@ function Header() {
                                             </Button>
                                         </MenuItem>
                                     ) : (
-                                        <MenuItem onClick={handleCloseUserMenu}>
-                                            <Link
-                                                to={config.routes.login}
-                                                className={cx("item")}
+                                        <>
+                                            <MenuItem
+                                                onClick={handleCloseUserMenu}
                                             >
-                                                Login
-                                            </Link>
-                                        </MenuItem>
+                                                <Link
+                                                    to={config.routes.login}
+                                                    className={cx("item")}
+                                                >
+                                                    Login
+                                                </Link>
+                                            </MenuItem>
+                                            <MenuItem
+                                                onClick={handleCloseUserMenu}
+                                            >
+                                                <Link
+                                                    to={config.routes.register}
+                                                    className={cx("item")}
+                                                >
+                                                    Register
+                                                </Link>
+                                            </MenuItem>
+                                        </>
                                     )}
                                 </div>
                             </Menu>

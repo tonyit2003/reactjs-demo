@@ -3,7 +3,11 @@ const { createContext, useState } = require("react");
 const UserContext = createContext();
 
 const UserProvider = ({ children }) => {
-    const [user, setUser] = useState({ email: "", auth: false });
+    const initUser =
+        localStorage.getItem("token") && localStorage.getItem("email")
+            ? { email: localStorage.getItem("email"), auth: true }
+            : { email: "", auth: false };
+    const [user, setUser] = useState(initUser);
 
     const login = (email) => {
         setUser({ email, auth: true });

@@ -29,7 +29,6 @@ class UserService implements \App\Services\Interfaces\UserServiceInterface
             return $users;
         } catch (Exception $e) {
             DB::rollBack();
-            dd($e->getMessage());
             return null;
         }
     }
@@ -44,7 +43,6 @@ class UserService implements \App\Services\Interfaces\UserServiceInterface
             return $user;
         } catch (Exception $e) {
             DB::rollBack();
-            dd($e->getMessage());
             return null;
         }
     }
@@ -59,7 +57,6 @@ class UserService implements \App\Services\Interfaces\UserServiceInterface
             return $user;
         } catch (Exception $e) {
             DB::rollBack();
-            dd($e->getMessage());
             return null;
         }
     }
@@ -73,7 +70,6 @@ class UserService implements \App\Services\Interfaces\UserServiceInterface
             return $user;
         } catch (Exception $e) {
             DB::rollBack();
-            dd($e->getMessage());
             return null;
         }
     }

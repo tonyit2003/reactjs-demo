@@ -1,76 +1,76 @@
-import React, { useContext, useEffect, useState } from "react";
+import { Alert, Button, Snackbar, TextField, Zoom } from "@mui/material";
 import {
-    MDBContainer,
-    MDBCol,
-    MDBRow,
     MDBBtn,
+    MDBCol,
+    MDBContainer,
     MDBIcon,
-    MDBCheckbox,
+    MDBRow,
 } from "mdb-react-ui-kit";
-import { FacebookOutlined, LinkedIn, Twitter } from "@mui/icons-material";
-import {
-    Alert,
-    Button,
-    IconButton,
-    Snackbar,
-    TextField,
-    Zoom,
-} from "@mui/material";
+import { useActionState, useEffect } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { backgroundLogin } from "~/assets/Images";
-import { loginUser } from "~/services/UserService";
 import config from "~/config";
-import { UserContext } from "~/context/UserContext";
+import { registerUser } from "~/services/UserService";
+import { checkRePassword } from "~/utils/utils";
 
-function Login() {
-    const { login } = useContext(UserContext);
-    const navigate = useNavigate();
+function Register() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [rePassword, setRePassword] = useState("");
     const [openToast, setOpenToast] = useState(false);
     const [message, setMessage] = useState({ content: "", error: false });
-    const [loading, setLoading] = useState(false);
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
 
-    useEffect(() => {
-        let token = localStorage.getItem("token");
-        if (token) {
-            navigate(config.routes.home);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    const navigate = useNavigate();
 
-    const handleLogin = async () => {
-        setLoading(true);
-        if (!email || !password) {
+    const register = async (previousState, formData) => {
+        const first_name = formData.get("first_name");
+        const last_name = formData.get("last_name");
+        const email = formData.get("email");
+        const password = formData.get("password");
+        const re_password = formData.get("re_password");
+
+        if (!email || !password || !re_password || !first_name || !last_name) {
             setMessage({
-                content: "Email or password is required",
+                content: "All fields are required",
                 error: true,
             });
-            setLoading(false);
             setOpenToast(true);
-            return;
+            return false;
         }
+
+        if (!checkRePassword(password, re_password)) {
+            setMessage({
+                content: "Passwords do not match",
+                error: true,
+            });
+            setOpenToast(true);
+            return false;
+        }
+
         try {
-            const res = await loginUser(email, password);
-            if (res && res.message && res.token) {
-                setLoading(false);
+            const res = await registerUser(
+                email,
+                password,
+                first_name,
+                last_name
+            );
+            if (res && res.message) {
                 setMessage({
                     content: res.message,
                     error: false,
                 });
-                login(email);
-                localStorage.setItem("token", res.token);
-                localStorage.setItem("email", email);
-                navigate(config.routes.home);
             } else {
                 setMessage({
                     content: "Invalid credentials",
                     error: true,
                 });
             }
-            setLoading(false);
             setOpenToast(true);
+            return true;
         } catch (error) {
             if (error.response && error.response.data.message) {
                 setMessage({
@@ -83,10 +83,19 @@ function Login() {
                     error: true,
                 });
             }
-            setLoading(false);
             setOpenToast(true);
+            return false;
         }
     };
+
+    const [state, formAction, isPending] = useActionState(register, false);
+
+    useEffect(() => {
+        if (state) {
+            navigate(config.routes.login);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [state]);
 
     const handleCloseToast = (event, reason) => {
         if (reason === "clickaway") {
@@ -97,7 +106,7 @@ function Login() {
     };
 
     return (
-        <div>
+        <form action={formAction}>
             <MDBContainer fluid className="p-3 my-5 h-custom">
                 <MDBRow>
                     <MDBCol col="10" md="6">
@@ -110,28 +119,43 @@ function Login() {
 
                     <MDBCol col="4" md="6">
                         <div className="d-flex flex-row align-items-center justify-content-center">
-                            <p className="lead fw-normal mb-0 me-3">
-                                Sign in with
-                            </p>
-
-                            <IconButton color="primary">
-                                <FacebookOutlined />
-                            </IconButton>
-
-                            <IconButton color="primary">
-                                <Twitter />
-                            </IconButton>
-
-                            <IconButton color="primary">
-                                <LinkedIn />
-                            </IconButton>
-                        </div>
-
-                        <div className="divider d-flex align-items-center my-4">
-                            <p className="text-center fw-bold mx-3 mb-0">Or</p>
+                            <p className="lead fw-normal mb-0 me-3">Register</p>
                         </div>
 
                         <TextField
+                            required
+                            className="mb-4"
+                            color="primary"
+                            fullWidth
+                            id="first_name"
+                            label="Enter first name..."
+                            type="text"
+                            variant="standard"
+                            value={firstName}
+                            name="first_name"
+                            onChange={(e) => {
+                                setFirstName(e.target.value);
+                            }}
+                        />
+
+                        <TextField
+                            required
+                            className="mb-4"
+                            color="primary"
+                            fullWidth
+                            id="last_name"
+                            label="Enter last name..."
+                            type="text"
+                            variant="standard"
+                            value={lastName}
+                            name="last_name"
+                            onChange={(e) => {
+                                setLastName(e.target.value);
+                            }}
+                        />
+
+                        <TextField
+                            required
                             className="mb-4"
                             color="primary"
                             fullWidth
@@ -140,12 +164,14 @@ function Login() {
                             type="email"
                             variant="standard"
                             value={email}
+                            name="email"
                             onChange={(e) => {
                                 setEmail(e.target.value);
                             }}
                         />
 
                         <TextField
+                            required
                             className="mb-4"
                             color="primary"
                             fullWidth
@@ -154,43 +180,44 @@ function Login() {
                             variant="standard"
                             type="password"
                             value={password}
+                            name="password"
                             onChange={(e) => {
                                 setPassword(e.target.value);
                             }}
                         />
 
-                        <div className="d-flex justify-content-between mb-4">
-                            <MDBCheckbox
-                                name="flexCheck"
-                                value=""
-                                id="flexCheckDefault"
-                                label="Remember me"
-                            />
-                            <a href="!#">Forgot password?</a>
-                        </div>
+                        <TextField
+                            required
+                            className="mb-4"
+                            color="primary"
+                            fullWidth
+                            id="re_password"
+                            label="Re-enter password..."
+                            variant="standard"
+                            type="password"
+                            value={rePassword}
+                            name="re_password"
+                            onChange={(e) => {
+                                setRePassword(e.target.value);
+                            }}
+                        />
 
                         <div className="text-center text-md-start mt-4 pt-2">
                             <Button
-                                loading={loading}
+                                loading={isPending}
                                 type="submit"
-                                onClick={handleLogin}
                                 variant="contained"
                                 color="primary"
-                                onKeyDown={(e) => {
-                                    if (e.key === "Enter") {
-                                        handleLogin();
-                                    }
-                                }}
                             >
-                                Login
+                                Register
                             </Button>
                             <p className="small fw-bold mt-2 pt-1 mb-2">
-                                Don't have an account?{" "}
+                                Do have an account?{" "}
                                 <Link
-                                    to={config.routes.register}
+                                    to={config.routes.login}
                                     className="link-danger"
                                 >
-                                    Register
+                                    Login
                                 </Link>
                             </p>
                         </div>
@@ -205,7 +232,7 @@ function Login() {
             </MDBContainer>
             <Snackbar
                 open={openToast}
-                autoHideDuration={5000}
+                autoHideDuration={2000}
                 onClose={handleCloseToast}
                 anchorOrigin={{ vertical: "top", horizontal: "right" }}
                 TransitionComponent={Zoom}
@@ -218,8 +245,9 @@ function Login() {
                     {message.content}
                 </Alert>
             </Snackbar>
-        </div>
+            ;
+        </form>
     );
 }
 
-export default Login;
+export default Register;

@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\AuthRequest;
+use App\Http\Requests\AuthLoginRequest;
+use App\Http\Requests\AuthRegisterRequest;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,7 +18,7 @@ class AuthController extends Controller
         $this->userService = $userService;
     }
 
-    public function login(AuthRequest $request)
+    public function login(AuthLoginRequest $request)
     {
         $email = $request->input('email');
         $password = $request->input('password');
@@ -35,6 +36,21 @@ class AuthController extends Controller
             'status' => 'error',
             'message' => 'Invalid credentials',
         ], 401);
+    }
+
+    public function register(AuthRegisterRequest $request)
+    {
+        $user = $this->userService->create($request);
+        if ($user !== null) {
+            return response()->json([
+                'message' => 'Register successfully',
+                'user' => $user
+            ], 201);
+        } else {
+            return response()->json([
+                'message' => 'Failed to register. Please try again.',
+            ], 400);
+        }
     }
 
     public function logout(Request $request)
